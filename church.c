@@ -16,7 +16,7 @@ Tex tWall, tFloor, tVault;
 
 const Church CHURCH[NCHURCH] = {
 { /* 1 */
-	"Sainte-Chapelle", "Paris, Frankreich", "Obergaden, 1248",
+	"Sainte-Chapelle", "Paris, France", "upper chapel, glazed 1248",
 	WIN_TALL_LIGHTS, OUTL_POINTED, 0, 4.6f, 13.5f, 3.0f,
 	VAULT_STARS, PIER_SLENDER, FLOOR_MOSAIC, WALL_PAINTED,
 	5.4f, 9.6f, 15.6f, 33.0f,
@@ -25,7 +25,7 @@ const Church CHURCH[NCHURCH] = {
 	 C(1.00f,0.48f,0.06f), C(0.10f,0.60f,0.30f), C(0.48f,0.13f,0.64f), C(0.95f,0.93f,0.82f)},
 	0.42f, 0.62f, 1 },
 { /* 2 */
-	"Kathedrale von Chartres", "Chartres, Frankreich", "Nordrose, um 1235",
+	"Chartres Cathedral", "Chartres, France", "the north rose, c. 1235",
 	WIN_LANCETS_ROSE, OUTL_POINTED, 0, 3.6f, 7.2f, 2.0f,
 	VAULT_RIB, PIER_CLUSTER, FLOOR_LABYRINTH, WALL_ASHLAR,
 	7.6f, 11.8f, 16.8f, 26.0f,
@@ -34,7 +34,7 @@ const Church CHURCH[NCHURCH] = {
 	 C(1.00f,0.48f,0.06f), C(0.10f,0.66f,0.30f), C(0.52f,0.14f,0.66f), C(0.95f,0.93f,0.80f)},
 	0.45f, 0.60f, 1 },
 { /* 3 */
-	"York Minster", "York, England", "Five Sisters, um 1250",
+	"York Minster", "York, England", "the Five Sisters, c. 1250",
 	WIN_GRISAILLE, OUTL_POINTED, 0, 7.4f, 15.0f, 2.4f,
 	VAULT_RIB, PIER_SLENDER, FLOOR_SLAB, WALL_ASHLAR,
 	7.0f, 12.0f, 16.5f, 26.0f,
@@ -43,7 +43,7 @@ const Church CHURCH[NCHURCH] = {
 	 C(0.86f,0.72f,0.38f), C(0.56f,0.74f,0.52f), C(0.52f,0.52f,0.72f), C(0.93f,0.96f,0.88f)},
 	0.30f, 0.70f, 0 },
 { /* 4 */
-	"King's College Chapel", "Cambridge, England", "Ostfenster, um 1515",
+	"King's College Chapel", "Cambridge, England", "the east window, c. 1515",
 	WIN_PERP_GRID, OUTL_POINTED, 0.62f, 5.6f, 11.5f, 2.6f,
 	VAULT_FAN, PIER_NONE, FLOOR_CHECKER, WALL_ASHLAR,
 	6.0f, 9.2f, 13.6f, 30.0f,
@@ -52,7 +52,7 @@ const Church CHURCH[NCHURCH] = {
 	 C(0.92f,0.60f,0.18f), C(0.16f,0.58f,0.34f), C(0.50f,0.20f,0.62f), C(0.94f,0.94f,0.86f)},
 	0.36f, 0.66f, 0 },
 { /* 5 */
-	"Kathedrale Le Mans", "Le Mans, Frankreich", "Himmelfahrt, um 1120",
+	"Le Mans Cathedral", "Le Mans, France", "the Ascension, c. 1120",
 	WIN_ROMANESQUE, OUTL_ROUND, 0, 2.6f, 5.4f, 4.2f,
 	VAULT_RIB, PIER_ROUND, FLOOR_SLAB, WALL_ASHLAR,
 	5.6f, 8.2f, 11.6f, 22.0f,
@@ -61,7 +61,7 @@ const Church CHURCH[NCHURCH] = {
 	 C(0.94f,0.58f,0.12f), C(0.24f,0.66f,0.32f), C(0.46f,0.20f,0.58f), C(0.94f,0.94f,0.84f)},
 	0.50f, 0.55f, 1 },
 { /* 6 */
-	"Santa Maria del Fiore", "Florenz, Italien", "Okulus nach Donatello, 1434",
+	"Santa Maria del Fiore", "Florence, Italy", "oculus after Donatello, 1434",
 	WIN_OCULUS, OUTL_CIRCLE, 0, 4.4f, 4.4f, 9.2f,
 	VAULT_RIB, PIER_CLUSTER, FLOOR_STAR, WALL_MARBLE,
 	8.6f, 13.5f, 19.0f, 28.0f,
@@ -70,7 +70,7 @@ const Church CHURCH[NCHURCH] = {
 	 C(0.94f,0.56f,0.14f), C(0.14f,0.58f,0.32f), C(0.48f,0.18f,0.58f), C(0.96f,0.94f,0.84f)},
 	0.28f, 0.74f, 1 },
 { /* 7 */
-	"Petersdom", "Rom, Vatikan", "Heilig-Geist-Fenster, 1666",
+	"St Peter's Basilica", "Rome, Vatican", "the Holy Spirit window, 1666",
 	WIN_ALABASTER, OUTL_CIRCLE, 0, 3.0f, 3.0f, 9.0f,
 	VAULT_COFFER, PIER_PILASTER, FLOOR_STAR, WALL_MARBLE,
 	10.0f, 13.0f, 18.5f, 30.0f,
@@ -79,7 +79,7 @@ const Church CHURCH[NCHURCH] = {
 	 C(1.00f,0.62f,0.16f), C(0.70f,0.62f,0.30f), C(0.75f,0.55f,0.30f), C(1.00f,0.96f,0.86f)},
 	0.20f, 0.78f, 1 },
 { /* 8 */
-	"Veitsdom", "Prag, Tschechien", "Jugendstilfenster, 1931",
+	"St Vitus Cathedral", "Prague, Czechia", "art nouveau glass, 1931",
 	WIN_NOUVEAU, OUTL_POINTED, 0, 3.4f, 8.2f, 2.6f,
 	VAULT_NET, PIER_CLUSTER, FLOOR_CHECKER, WALL_ASHLAR,
 	6.2f, 11.5f, 16.4f, 26.0f,
@@ -88,7 +88,7 @@ const Church CHURCH[NCHURCH] = {
 	 C(0.98f,0.52f,0.12f), C(0.30f,0.70f,0.42f), C(0.58f,0.28f,0.70f), C(0.97f,0.95f,0.86f)},
 	0.34f, 0.64f, 1 },
 { /* 9 */
-	"Franziskanerkirche", "Krakau, Polen", "Es werde!, 1904",
+	"Franciscan Church", "Krakow, Poland", "Let there be!, 1904",
 	WIN_VORTEX, OUTL_POINTED, 0, 3.4f, 7.6f, 3.0f,
 	VAULT_RIB, PIER_CLUSTER, FLOOR_CHECKER, WALL_PAINTED,
 	5.4f, 9.8f, 14.0f, 22.0f,
@@ -97,7 +97,7 @@ const Church CHURCH[NCHURCH] = {
 	 C(1.00f,0.50f,0.06f), C(0.26f,0.62f,0.36f), C(0.46f,0.16f,0.72f), C(0.98f,0.94f,0.80f)},
 	0.40f, 0.58f, 1 },
 { /* 10 */
-	"Honan Chapel", "Cork, Irland", "Fenster von Harry Clarke, 1916",
+	"Honan Chapel", "Cork, Ireland", "windows by Harry Clarke, 1916",
 	WIN_JEWEL, OUTL_POINTED, 0, 1.7f, 4.8f, 2.8f,
 	VAULT_WOOD, PIER_NONE, FLOOR_MOSAIC, WALL_ASHLAR,
 	4.3f, 5.6f, 8.4f, 22.0f,

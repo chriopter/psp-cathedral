@@ -703,7 +703,7 @@ static void hud(void)
 	if (hudFade > 0.01f) {
 		float a = hudFade;
 		text(240 - 11 * 8, 20, "LUX AETERNA", acol(0xffe8f4ff, a), 2);
-		text(240 - 30 * 4, 42, "zehn Kirchen, ein Sonnenstrahl", acol(0xffb8c8d8, a * 0.9f), 1);
+		text(240 - 26 * 4, 42, "ten churches, one sunbeam", acol(0xffb8c8d8, a * 0.9f), 1);
 	}
 	if (cardFade > 0.01f) {
 		float a = smooth(0, 0.35f, cardFade);
@@ -713,7 +713,7 @@ static void hud(void)
 		text(20, 226, CH->place, acol(0xffa8bcd0, a * 0.9f), 1);
 		text(20, 238, CH->work, acol(0xff90b0c8, a * 0.85f), 1);
 		text(444 - strlen(num) * 8, 206, num, acol(0xff88a0b8, a * 0.8f), 1);
-		text(20, 254, "L / R : Kirche wechseln", acol(0xff70889c, a * 0.7f), 1);
+		text(20, 254, "L / R : change church", acol(0xff70889c, a * 0.7f), 1);
 	}
 	if (optHelp) {
 		sceGuDisable(GU_TEXTURE_2D);
@@ -723,17 +723,17 @@ static void hud(void)
 		sceGuDrawArray(GU_SPRITES, V2_FMT, 2, 0, v);
 		sceGuEnable(GU_TEXTURE_2D);
 		u32 w = 0xffe0e8f0, g = 0xff7fd0ff, on = 0xff80ff90, off = 0xff6060ff;
-		text(20, 18, "L / R       Kirche wechseln", w, 1);
-		text(20, 28, "Analog      Kamera selbst fuehren", w, 1);
-		text(20, 38, "Pfeile      naeher/weiter, Tageszeit", w, 1);
-		text(20, 48, "START       Kamerafahrt an/aus", w, 1);
-		text(20, 62, "Dreieck     Bloom", optBloom ? on : off, 1);
-		text(20, 72, "Kreis       Lichtstrahlen", optShafts ? on : off, 1);
-		text(20, 82, "Quadrat     Staub im Licht", optDust ? on : off, 1);
-		text(20, 92, "Kreuz       Sonne anhalten", optPause ? on : off, 1);
-		text(20, 108, "GU: 4 HW-Lichter, Nebel, Spiegelung, Textur-", g, 1);
-		text(20, 118, "projektion, 2x-Farbe, Bezier-Gewoelbe, Mipmaps,", g, 1);
-		text(20, 128, "Render-to-Texture-Bloom, Sprites, VFPU-Matrizen", g, 1);
+		text(20, 18, "L / R       previous / next church", w, 1);
+		text(20, 28, "Analog      take the camera yourself", w, 1);
+		text(20, 38, "D-pad       closer / further, time of day", w, 1);
+		text(20, 48, "START       camera flight on / off", w, 1);
+		text(20, 62, "Triangle    bloom", optBloom ? on : off, 1);
+		text(20, 72, "Circle      light shafts", optShafts ? on : off, 1);
+		text(20, 82, "Square      dust in the light", optDust ? on : off, 1);
+		text(20, 92, "Cross       hold the sun", optPause ? on : off, 1);
+		text(20, 108, "GE: 4 hardware lights, fog, reflection, texture", g, 1);
+		text(20, 118, "projection, colour doubling, Bezier vault, mipmaps,", g, 1);
+		text(20, 128, "render-to-texture bloom, sprites, VFPU matrices", g, 1);
 	}
 	sceGuDisable(GU_BLEND);
 }
@@ -780,6 +780,18 @@ extern const unsigned char music_mp3_end[];
 static SceUID musicThread = -1;
 static volatile int musicRun = 1;
 
+#ifdef AUDIO_LOG
+static void alog(const char *fmt, int a, int b)
+{
+	char line[128];
+	int n = sprintf(line, fmt, a, b);
+	SceUID fd = sceIoOpen("ms0:/cathedral_audio.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
+	if (fd >= 0) { sceIoWrite(fd, line, n); sceIoClose(fd); }
+}
+#else
+#define alog(f, a, b) ((void)0)
+#endif
+
 static int music_main(SceSize args, void *argp)
 {
 	static unsigned char __attribute__((aligned(64))) mp3Buf[16 * 1024];
@@ -787,9 +799,12 @@ static int music_main(SceSize args, void *argp)
 	const unsigned char *blob = music_mp3;
 	int len = (int)(music_mp3_end - music_mp3);
 
-	if (sceUtilityLoadModule(PSP_MODULE_AV_AVCODEC) < 0) return 0;
-	if (sceUtilityLoadModule(PSP_MODULE_AV_MP3) < 0) return 0;
-	if (sceMp3InitResource() < 0) return 0;
+	int e1 = sceUtilityLoadModule(PSP_MODULE_AV_AVCODEC);
+	int e2 = sceUtilityLoadModule(PSP_MODULE_AV_MP3);
+	int e3 = sceMp3InitResource();
+	alog("modules %08x %08x\n", e1, e2);
+	alog("initres %08x len %d\n", e3, (int)(music_mp3_end - music_mp3));
+	if (e1 < 0 || e2 < 0 || e3 < 0) return 0;
 
 	SceMp3InitArg arg;
 	memset(&arg, 0, sizeof(arg));
@@ -800,6 +815,7 @@ static int music_main(SceSize args, void *argp)
 	arg.pcmBuf = (SceUChar8 *)pcmBuf;
 	arg.pcmBufSize = sizeof(pcmBuf);
 	int h = sceMp3ReserveMp3Handle(&arg);
+	alog("handle %d\n", h, 0);
 	if (h < 0) return 0;
 
 	for (int i = 0; i < 3; i++) {
@@ -810,7 +826,9 @@ static int music_main(SceSize args, void *argp)
 		memcpy(dst, blob + pos, need);
 		sceMp3NotifyAddStreamData(h, need);
 	}
-	if (sceMp3Init(h) < 0) { sceMp3ReleaseMp3Handle(h); return 0; }
+	int ie = sceMp3Init(h);
+	alog("init %08x\n", ie, 0);
+	if (ie < 0) { sceMp3ReleaseMp3Handle(h); return 0; }
 
 	int chans = sceMp3GetMp3ChannelNum(h);
 #ifdef CAPTURE_AUDIO
@@ -823,9 +841,10 @@ static int music_main(SceSize args, void *argp)
 #endif
 	int fmt = chans == 1 ? PSP_AUDIO_FORMAT_MONO : PSP_AUDIO_FORMAT_STEREO;
 	int ch = sceAudioChReserve(PSP_AUDIO_NEXT_CHANNEL, 1152, fmt);
+	alog("channel %d chans %d\n", ch, chans);
 	if (ch < 0) { sceMp3ReleaseMp3Handle(h); return 0; }
 
-	const int vol = 0x3800;
+	const int vol = 0x6000;
 	while (musicRun) {
 		SceShort16 *buf = 0;
 		int bytes = sceMp3Decode(h, &buf);
@@ -856,6 +875,10 @@ static int music_main(SceSize args, void *argp)
 			}
 		}
 #endif
+		{
+			static int frames = 0;
+			if (++frames <= 3 || frames == 200) alog("decode %d bytes frame %d\n", bytes, frames);
+		}
 		sceAudioOutputPannedBlocking(ch, vol, vol, buf);
 	}
 	sceAudioChRelease(ch);
@@ -866,7 +889,11 @@ static int music_main(SceSize args, void *argp)
 
 static void music_start(void)
 {
-	musicThread = sceKernelCreateThread("music", music_main, 0x21, 0x8000, 0, 0);
+	/* Above the interface, not under it: the devbook puts a software synth one
+	 * step below so a long render cannot hold a frame back, but this thread only
+	 * hands a decoded buffer to the Media Engine, and under it the heavy scene
+	 * starved it -- the sound came in bursts with silence between. */
+	musicThread = sceKernelCreateThread("music", music_main, 0x12, 0x8000, 0, 0);
 	if (musicThread >= 0) sceKernelStartThread(musicThread, 0, 0);
 }
 static void music_stop(void)
@@ -946,7 +973,7 @@ static void loading(const char *msg)
 static void enter_church(int idx, int quiet)
 {
 	chIdx = ((idx % NCHURCH) + NCHURCH) % NCHURCH;
-	if (!quiet) loading("Das Glas wird gebrannt ...");
+	if (!quiet) loading("firing the glass ...");
 	pool_release(poolBase);
 	glass_select(chIdx);
 	F.glassZ = -0.55f;
