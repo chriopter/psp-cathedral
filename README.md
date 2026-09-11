@@ -46,7 +46,8 @@ traced or used as pixels, and every original is long out of copyright. See
 - **Sprites**: dust motes as 3D sprites, each taking the colour of the shaft it
   drifts in; candle flames and halos.
 - **Sound**: the Media Engine decodes the MP3; a thread of the program's own
-  feeds the audio channel, one priority step under the interface.
+  tops the decoder up and feeds the audio channel, running above the interface
+  so that a heavy frame cannot starve it.
 - **Also**: vertex fog, mip-mapping, alpha test, a multiplicative vignette, and
   matrices through `libpspgum_vfpu`.
 
