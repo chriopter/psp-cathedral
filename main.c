@@ -785,12 +785,27 @@ static void alog(const char *fmt, int a, int b)
 {
 	char line[128];
 	int n = sprintf(line, fmt, a, b);
+#ifdef CAPTURE_AUDIO
+	SceUID fd = sceIoOpen("host0:/audio.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
+#else
 	SceUID fd = sceIoOpen("ms0:/cathedral_audio.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
+#endif
 	if (fd >= 0) { sceIoWrite(fd, line, n); sceIoClose(fd); }
 }
 #else
 #define alog(f, a, b) ((void)0)
 #endif
+
+/* Hands the decoder whatever slice of the file it asks for next. */
+static int fill_stream(int h, const unsigned char *blob, int len)
+{
+	SceUChar8 *dst; SceInt32 need, pos;
+	if (sceMp3GetInfoToAddStreamData(h, &dst, &need, &pos) < 0) return 0;
+	if (pos >= len || need <= 0) return 0;
+	if (pos + need > len) need = len - pos;
+	memcpy(dst, blob + pos, need);
+	return sceMp3NotifyAddStreamData(h, need) >= 0;
+}
 
 static int music_main(SceSize args, void *argp)
 {
@@ -818,67 +833,39 @@ static int music_main(SceSize args, void *argp)
 	alog("handle %d\n", h, 0);
 	if (h < 0) return 0;
 
-	for (int i = 0; i < 3; i++) {
-		SceUChar8 *dst; SceInt32 need, pos;
-		if (sceMp3GetInfoToAddStreamData(h, &dst, &need, &pos) < 0) break;
-		if (pos + need > len) need = len - pos;
-		if (need <= 0) break;
-		memcpy(dst, blob + pos, need);
-		sceMp3NotifyAddStreamData(h, need);
-	}
+	/* Top the decoder up before every decode. Feeding it three chunks at the
+	 * start and waiting for it to complain is what silenced the organ after
+	 * seven seconds: the buffer ran dry, the refill never took, and the loop
+	 * sat resetting the play position forever. */
+	fill_stream(h, blob, len);
 	int ie = sceMp3Init(h);
 	alog("init %08x\n", ie, 0);
 	if (ie < 0) { sceMp3ReleaseMp3Handle(h); return 0; }
 
 	int chans = sceMp3GetMp3ChannelNum(h);
-#ifdef CAPTURE_AUDIO
-	{
-		char line[200];
-		int n = sprintf(line, "len %d init ok rate %d chans %d\n", len, (int)sceMp3GetSamplingRate(h), chans);
-		SceUID fd = sceIoOpen("host0:/audio.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
-		if (fd >= 0) { sceIoWrite(fd, line, n); sceIoClose(fd); }
-	}
-#endif
 	int fmt = chans == 1 ? PSP_AUDIO_FORMAT_MONO : PSP_AUDIO_FORMAT_STEREO;
 	int ch = sceAudioChReserve(PSP_AUDIO_NEXT_CHANNEL, 1152, fmt);
 	alog("channel %d chans %d\n", ch, chans);
 	if (ch < 0) { sceMp3ReleaseMp3Handle(h); return 0; }
 
 	const int vol = 0x6000;
+	int frames = 0, dry = 0;
 	while (musicRun) {
+		if (sceMp3CheckStreamDataNeeded(h) > 0) fill_stream(h, blob, len);
 		SceShort16 *buf = 0;
 		int bytes = sceMp3Decode(h, &buf);
 		if (bytes <= 0) {
-			if (sceMp3CheckStreamDataNeeded(h) > 0) {
-				SceUChar8 *dst; SceInt32 need, pos;
-				if (sceMp3GetInfoToAddStreamData(h, &dst, &need, &pos) >= 0) {
-					if (pos + need > len) need = len - pos;
-					if (need > 0) {
-						memcpy(dst, blob + pos, need);
-						sceMp3NotifyAddStreamData(h, need);
-						continue;
-					}
-				}
-			}
-			sceMp3ResetPlayPosition(h);      /* round again */
-			sceKernelDelayThread(2000);
+			/* either it wants more of the file, or the piece is over */
+			if (sceMp3CheckStreamDataNeeded(h) > 0 && fill_stream(h, blob, len)) { dry = 0; continue; }
+			alog("loop after %d frames (last %d)\n", frames, bytes);
+			sceMp3ResetPlayPosition(h);
+			fill_stream(h, blob, len);
+			if (++dry > 200) break;      /* something is wrong; do not spin forever */
+			sceKernelDelayThread(3000);
 			continue;
 		}
-#ifdef CAPTURE_AUDIO
-		{
-			static int frames = 0;
-			if (++frames == 20) {
-				char line[200];
-				int n = sprintf(line, "decoded %d frames, last %d bytes, sum %d\n", frames, bytes, (int)buf[0] + (int)buf[1] + (int)buf[100]);
-				SceUID fd = sceIoOpen("host0:/audio.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
-				if (fd >= 0) { sceIoWrite(fd, line, n); sceIoClose(fd); }
-			}
-		}
-#endif
-		{
-			static int frames = 0;
-			if (++frames <= 3 || frames == 200) alog("decode %d bytes frame %d\n", bytes, frames);
-		}
+		dry = 0;
+		if (++frames == 1 || frames == 200 || frames == 1000 || frames == 2000) alog("decode %d bytes frame %d\n", bytes, frames);
 		sceAudioOutputPannedBlocking(ch, vol, vol, buf);
 	}
 	sceAudioChRelease(ch);
@@ -1033,7 +1020,7 @@ int main(void)
 
 #ifdef CAPTURE_AUDIO
 	music_start();
-	sceKernelDelayThread(4000000);
+	sceKernelDelayThread(30000000);
 	musicRun = 0;
 	sceKernelDelayThread(200000);
 	sceGuTerm();

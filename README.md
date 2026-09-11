@@ -97,7 +97,7 @@ PPSSPPHeadless "$PWD/cathedral.elf" -r "$PWD" --graphics=software
   numbers to `host0:/expo.txt`.
 - `-DCAPTURE_VIDEO` — ten seconds of camera moves, 300 frames, to `host0:/vid/`
   (make the directory first).
-- `-DCAPTURE_AUDIO` — starts the music, decodes for four seconds and writes what
+- `-DCAPTURE_AUDIO` — starts the music, decodes for thirty seconds and writes what
   the MP3 decoder reported to `host0:/audio.txt`.
 
 This has only been run in PPSSPP so far, not on real PSP hardware.

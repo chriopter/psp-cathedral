@@ -1,0 +1,8 @@
+modules 00000000 00000000
+initres 00000000 len 1146148
+handle 0
+init 00000000
+channel 7 chans 2
+decode 4608 bytes frame 1
+decode 4608 bytes frame 200
+decode 4608 bytes frame 1000
