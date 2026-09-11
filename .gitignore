@@ -1,0 +1,6 @@
+*.o
+*.elf
+*.prx
+EBOOT.PBP
+PARAM.SFO
+shot*.bmp
