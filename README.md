@@ -56,8 +56,12 @@ moves across the sky slowly and clouds pass in front of it.
 docker run --rm -v "$PWD:/src" -w /src pspdev/pspdev:latest make
 ```
 
-Copy `EBOOT.PBP` to `PSP/GAME/cathedral/` on the memory stick, or open it in
-PPSSPP.
+Copy `EBOOT.PBP` to `PSP/GAME/Cathedral/` on the memory stick, or open it in
+PPSSPP. On a PSP running [PSPDX](https://github.com/chriopter/pspdx) it is in
+the catalog under Demos.
+
+A `v*` tag builds `dist/psp-cathedral.zip` (see `tools/package.sh`) and
+attaches it to a GitHub release.
 
 ### Screenshots without a display
 
@@ -68,5 +72,9 @@ frame to `host0:/shotN.bmp`, and exits:
 docker run --rm -v "$PWD:/src" -w /src pspdev/pspdev:latest make EXTRA_CFLAGS=-DCAPTURE
 PPSSPPHeadless "$PWD/cathedral.elf" -r "$PWD" --graphics=software
 ```
+
+`-DCAPTURE_VIDEO` instead writes ten seconds of a camera dolly, 300 frames,
+to `host0:/vid/` (make the directory first). That is where the catalog's
+preview clip comes from.
 
 This has only been run in PPSSPP so far, not on real PSP hardware.

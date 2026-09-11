@@ -4,3 +4,5 @@
 EBOOT.PBP
 PARAM.SFO
 shot*.bmp
+dist/
+vid/

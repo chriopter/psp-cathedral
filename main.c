@@ -1577,7 +1577,7 @@ static void loading(const char *msg)
 	}
 }
 
-#ifdef CAPTURE
+#if defined(CAPTURE) || defined(CAPTURE_VIDEO)
 static void save_bmp(const char *path)
 {
 	const u32 *px = (const u32 *)(0x44000000 | ((u32)sceGeEdramGetAddr() + (u32)drawBuf));
@@ -1600,6 +1600,7 @@ static void save_bmp(const char *path)
 	}
 	sceIoClose(fd);
 }
+#ifdef CAPTURE
 typedef struct { float t, tau, th, r, h, ty; int bloom, auto_; } Shot;
 static const Shot shots[] = {
 	{20.0f, 0.15f, 0.40f, 10.0f, 1.9f, 4.2f, 1, 0},
@@ -1609,6 +1610,7 @@ static const Shot shots[] = {
 	{40.0f, 0.30f, -0.25f, 7.5f, 1.5f, 5.5f, 1, 0},
 	{50.0f, 0.40f, 0.55f, 12.0f, 1.6f, 1.2f, 1, 0},
 };
+#endif
 #endif
 
 int main(void)
@@ -1638,6 +1640,33 @@ int main(void)
 	update_camera();
 	for (int i = 0; i < NDUST; i++) { dust_spawn(&dust[i]); dust[i].life = frand() * dust[i].max; }
 
+#ifdef CAPTURE_VIDEO
+	/* ten seconds at 30 fps for the catalog clip: a dolly towards the window
+	 * while the sun climbs, frames to host0:/vid/fNNN.bmp */
+	optAuto = 0;
+	hudFade = 0;
+	for (int i = 0; i < 300 && running; i++) {
+		float k = smooth(0, 1, i / 299.0f);
+		F.dt = 1 / 30.0f;
+		F.t = 12.0f + i * F.dt;
+		F.tau = mixf(0.10f, 0.38f, k);
+		camTh = mixf(0.40f, 0.0f, k);
+		camR = mixf(11.5f, 8.2f, k);
+		camH = mixf(1.7f, 2.3f, k);
+		camTY = mixf(4.0f, 4.8f, k);
+		update_sun();
+		update_camera();
+		update_dust();
+		frame();
+		char path[64];
+		sprintf(path, "host0:/vid/f%03d.bmp", i);
+		save_bmp(path);
+		swap();
+	}
+	sceGuTerm();
+	sceKernelExitGame();
+	return 0;
+#endif
 #ifdef CAPTURE
 	for (unsigned s = 0; s < sizeof(shots) / sizeof(shots[0]) && running; s++) {
 		F.t = shots[s].t; F.tau = shots[s].tau; optAuto = shots[s].auto_; optBloom = shots[s].bloom;
