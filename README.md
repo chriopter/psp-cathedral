@@ -82,8 +82,8 @@ PPSSPP.
 
 A `v*` tag builds `dist/psp-cathedral.zip` (see `tools/package.sh`) and attaches
 it to a GitHub release. The app is listed in
-[PSPDX](https://github.com/chriopter/pspdx): `app.pspdx` in the root describes
-it, and the release action fills in the release half at every tag.
+[PSPDX](https://github.com/chriopter/pspdx); the release's zip with the EBOOT
+is all it needs.
 
 ### Without a display
 
