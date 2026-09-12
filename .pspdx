@@ -1,0 +1,9 @@
+{
+  "schema": "https://github.com/chriopter/pspdx/blob/master/schema/v1.pspdx",
+  "source": "https://github.com/chriopter/psp-cathedral",
+  "name": "Lux Aeterna",
+  "summary": "Ten churches, stained glass, sunlight and Bach on the PSP.",
+  "category": "demo",
+  "license": "BSD-3-Clause",
+  "installdir": "PSP/GAME/Cathedral"
+}

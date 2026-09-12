@@ -7,6 +7,7 @@ cd "$(dirname "$0")/.."
 rm -rf dist && mkdir -p dist/PSP/GAME/Cathedral
 cp EBOOT.PBP dist/PSP/GAME/Cathedral/
 cp LICENSE dist/PSP/GAME/Cathedral/LICENSE.txt
+cp CREDITS.md dist/PSP/GAME/Cathedral/CREDITS.md
 (cd dist && zip -q -r -X psp-cathedral.zip PSP)
 rm -rf dist/PSP
 sha256sum dist/psp-cathedral.zip | tee dist/psp-cathedral.zip.sha256

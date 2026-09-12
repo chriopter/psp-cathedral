@@ -1,4 +1,4 @@
-# psp-cathedral
+# Lux Aeterna
 
 *Lux Aeterna*: ten churches for the PSP, and the sun coming through their
 glass. **L** and **R** walk from one to the next.
@@ -81,9 +81,10 @@ Copy `EBOOT.PBP` to `PSP/GAME/Cathedral/` on the memory stick, or open it in
 PPSSPP.
 
 A `v*` tag builds `dist/psp-cathedral.zip` (see `tools/package.sh`) and attaches
-it to a GitHub release. The app is listed in
-[PSPDX](https://github.com/chriopter/pspdx); the release's zip with the EBOOT
-is all it needs.
+it to a GitHub release. The root `.pspdx` describes the app for
+[PSPDX](https://github.com/chriopter/pspdx), including its `source` and
+install directory. XMB media lives in `media/xmb/` and is packed into the
+EBOOT; release metadata comes from GitHub.
 
 ### Without a display
 
