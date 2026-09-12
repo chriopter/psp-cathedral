@@ -78,11 +78,12 @@ docker run --rm -v "$PWD:/src" -w /src pspdev/pspdev:latest make
 ```
 
 Copy `EBOOT.PBP` to `PSP/GAME/Cathedral/` on the memory stick, or open it in
-PPSSPP. On a PSP running [PSPDX](https://github.com/chriopter/pspdx) it is in
-the catalog under Demos.
+PPSSPP.
 
 A `v*` tag builds `dist/psp-cathedral.zip` (see `tools/package.sh`) and attaches
-it to a GitHub release.
+it to a GitHub release. The app is listed in
+[PSPDX](https://github.com/chriopter/pspdx): `app.pspdx` in the root describes
+it, and the release action fills in the release half at every tag.
 
 ### Without a display
 
