@@ -8,10 +8,10 @@
   "license":  "BSD-3-Clause",
   "repo":     "https://github.com/chriopter/psp-cathedral",
 
-  "version":  "0.2.2",
-  "rev":      1789167730,
-  "url":      "https://github.com/chriopter/psp-cathedral/releases/download/v0.2.2/psp-cathedral.zip",
-  "sha256":   "50a0495d6c7a15a4e95db07f7be8a5ade25903d87761bd857b65d50ce0fb5849",
-  "size":     1361292,
+  "version":  "0.2.3",
+  "rev":      1789200686,
+  "url":      "https://github.com/chriopter/psp-cathedral/releases/download/v0.2.3/psp-cathedral.zip",
+  "sha256":   "7614b8baee3c885db5d91ca7111ef23a0faa8747dbb682c59c13a5010086d81b",
+  "size":     1671112,
   "root":     "PSP/GAME/Cathedral/"
 }
